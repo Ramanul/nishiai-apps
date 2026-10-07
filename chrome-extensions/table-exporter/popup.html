@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { width: 280px; font: 13px system-ui, sans-serif; margin: 0; padding: 12px; background: #10151c; color: #e8edf4; }
+    h1 { font-size: 14px; margin: 0 0 8px; }
+    #status { margin: 6px 0 10px; color: #9fb3c8; min-height: 16px; }
+    button { display: block; width: 100%; margin: 6px 0; padding: 8px 10px; border: 0; border-radius: 8px;
+             background: #2f6fed; color: #fff; font-weight: 600; cursor: pointer; }
+    button:disabled { background: #3a4350; cursor: default; }
+    button.copy { background: #24466b; }
+    .pro { font-size: 11px; color: #66788c; margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <h1>Table Exporter</h1>
+  <div id="status">Scanning page…</div>
+  <button id="download" disabled>Download CSV</button>
+  <button id="copy" class="copy" disabled>Copy to clipboard</button>
+  <div class="pro">v1.0 free — runs 100% locally, no data leaves your browser.</div>
+  <script src="popup.js"></script>
+</body>
+</html>

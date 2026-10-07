@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { width: 260px; font: 13px system-ui, sans-serif; margin: 0; padding: 12px; background: #0f1712; color: #e6f0e8; }
+    h1 { font-size: 14px; margin: 0 0 6px; }
+    #state { margin: 6px 0 12px; color: #9fbfa8; }
+    label { display: flex; align-items: center; gap: 8px; margin: 8px 0; cursor: pointer; }
+    .pro { font-size: 11px; color: #63796a; margin-top: 10px; }
+    button { width: 100%; padding: 8px; border: 0; border-radius: 8px; background: #2f8f4e; color: #fff; font-weight: 600; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>Consent Decliner</h1>
+  <div id="state">checking…</div>
+  <label><input type="checkbox" id="enabled" checked> Auto-reject on every site</label>
+  <button id="reset">Forgot clicked banners</button>
+  <div class="pro">v1.0 free — clicks “Reject all” only. Never accepts anything.</div>
+  <script src="popup.js"></script>
+</body>
+</html>

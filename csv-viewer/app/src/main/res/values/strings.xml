@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">CSV Viewer</string>
+    <style name="Theme.CsvViewer" parent="android:Theme.Material.Light.NoActionBar" />
+</resources>

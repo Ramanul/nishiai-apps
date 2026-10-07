@@ -1,0 +1,42 @@
+{
+  "manifest_version": 3,
+  "name": "Consent Decliner \u2014 auto-reject cookie banners",
+  "version": "1.0.0",
+  "description": "Automatically clicks 'Reject all' on cookie consent banners when a legal reject option exists. Local heuristics, no tracking.",
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+  "action": {
+    "default_title": "Consent Decliner",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "background": {
+    "service_worker": "bg.js"
+  },
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1pUnWucJ52SGpCg1SvzyonvRwo3oXXXk+UkvyJ2zjE4ed4NPEkdebhBtqz9ZFR5Nwq7thL1JUis0EprZPKUH/j++CP5mal5TOCz89C5qK0MnOBYnX7ZM++DFK/c+uwPusaVO5jE2gltA+VQd+H8aGVUK/VUN9YoOK/b5lMYJhIvmvy75TMw0HW2vmx9VL3lODengnMUGegKFGfsXU6Y0N1KDYJO3X49UXITdvUm0lHaH0GW8LFkmeuQdVhsU+jTOGUyYJrPSKWANupHVuljvUIldB+Uf2WZeOf1AkVpYFfr6uVT5rYFvMmaobhzP3BH0wEYtBesz762VJMbwQJnqzQIDAQAB"
+}
