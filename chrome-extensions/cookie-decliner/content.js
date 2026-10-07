@@ -47,7 +47,7 @@
   }
 
   function tryClick(attempt) {
-    chrome.storage.sync.get({ enabled: true }, ({ enabled }) => {
+    chrome.storage.sync.get({ enabled: false }, ({ enabled }) => {
       if (!enabled) return;
       const btn = findRejectButton();
       if (btn) {

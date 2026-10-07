@@ -1,0 +1,2 @@
+[console_scripts]
+pdfbatch = pdfbatch.__main__:main

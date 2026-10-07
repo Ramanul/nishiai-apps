@@ -1,0 +1,13 @@
+README.md
+pyproject.toml
+src/pdfbatch/__init__.py
+src/pdfbatch/__main__.py
+src/pdfbatch/excel_out.py
+src/pdfbatch/extract.py
+src/pdfbatch.egg-info/PKG-INFO
+src/pdfbatch.egg-info/SOURCES.txt
+src/pdfbatch.egg-info/dependency_links.txt
+src/pdfbatch.egg-info/entry_points.txt
+src/pdfbatch.egg-info/requires.txt
+src/pdfbatch.egg-info/top_level.txt
+tests/test_batch.py
