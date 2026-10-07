@@ -7,7 +7,7 @@ import urllib.request
 import websocket
 
 BASE = "http://127.0.0.1:9223"
-DL_DIR = r"C:\Users\cw_26\nishiai-apps\chrome-extensions\test-downloads"
+DL_DIR = r"C:\Users\cw_26\nishiai-apps-public\chrome-extensions\test-downloads"
 EXT_ID = "jmnaglohpchgjicbpiodkkhchdbiapfm"
 
 
@@ -51,7 +51,20 @@ def main():
     if out["downloaded"]:
         with open(os.path.join(DL_DIR, out["downloaded"][0]), encoding="utf-8-sig") as f:
             out["csv"] = f.read()
+    # formula-prefix hardening (OWASP: = + - @ execute as formulas in Excel)
+    out["formula_csv"] = popup.send("Runtime.evaluate", {
+        "expression": "window.__buildCSV([[\"=1+1\", \"@x\", \"-5\", \"plain\"]])",
+        "returnByValue": True})["result"]["value"]
     print(json.dumps(out, ensure_ascii=False, indent=1))
+    assert out["popup"] and out["popup"]["name"], "popup did not report a manifest name"
+    assert out["downloaded"], "no CSV was downloaded"
+    assert "'=1+1" in out["formula_csv"] and "'@x" in out["formula_csv"], out["formula_csv"]
+    assert '"plain"' in out["formula_csv"], out["formula_csv"]
+
+
+if __name__ == "__main__":
+    main()
+    print("EXPORTER-OK")
 
 
 if __name__ == "__main__":

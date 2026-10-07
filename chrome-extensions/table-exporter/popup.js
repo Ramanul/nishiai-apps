@@ -3,9 +3,14 @@ let pageTables = [];
 let pageHost = "";
 
 function toCSV(rows) {
-  return rows
-    .map((row) => row.map((cell) => `"${String(cell ?? "").replace(/"/g, '""')}"`).join(","))
-    .join("\r\n");
+  // OWASP: cells starting with = + - @ would execute as formulas in Excel/LibreOffice.
+  // Prefixing with ' keeps the literal text visible instead of an active formula.
+  const safe = (cell) => {
+    let s = String(cell ?? "").replace(/"/g, '""');
+    if (/^[=+\-@]/.test(s)) s = `'${s}`;
+    return `"${s}"`;
+  };
+  return rows.map((row) => row.map(safe).join(",")).join("\r\n");
 }
 
 // Exposed for automated testing.

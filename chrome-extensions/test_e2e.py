@@ -6,7 +6,7 @@ import urllib.request
 import websocket
 
 BASE = "http://127.0.0.1:9223"
-DL_DIR = r"C:\Users\cw_26\nishiai-apps\chrome-extensions\test-downloads"
+DL_DIR = r"C:\Users\cw_26\nishiai-apps-public\chrome-extensions\test-downloads"
 
 
 def get_json(path):
@@ -38,11 +38,16 @@ def main():
     browser.send("Browser.setDownloadBehavior",
                  {"behavior": "allow", "downloadPath": DL_DIR})
 
-    sw = next((t for t in lst if t["type"] == "service_worker" and "chrome-extension://" in t["url"]), None)
-    if sw:
-        ext_id = sw["url"].split("/")[2]
-    else:
-        ext_id = "jmnaglohpchgjicbpiodkkhchdbiapfm"  # ID calculat din calea exteniei (SHA256)
+    sw = None
+    for _ in range(20):  # the MV3 service worker registers lazily on a fresh profile
+        sw = next((t for t in get_json("/json/list")
+                   if t["type"] == "service_worker" and "chrome-extension://" in t["url"]), None)
+        if sw:
+            break
+        time.sleep(0.5)
+    if not sw:
+        raise RuntimeError("extension service worker never registered on :9223")
+    ext_id = sw["url"].split("/")[2]
     out["ext_id"] = ext_id
 
     page = CDP(next(t for t in lst if t["type"] == "page")["webSocketDebuggerUrl"])
