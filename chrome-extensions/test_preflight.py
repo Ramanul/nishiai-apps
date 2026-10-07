@@ -4,25 +4,31 @@ Mechanically re-checks the environment lessons from docs/LECTII-TESTARE.md,
 so they surface in seconds instead of mid-session debugging.
 Protocol: whenever a lesson becomes mechanically checkable, add it here.
 
-v2 (2026-10-07, after Arena's review @ fe70806): P0 fixes —
-- CfT probe requires returncode 0 AND a real output marker; any other failure
-  is `probe-error`, never a green "CfT ready" (no false positives);
-- explicit browser mode (--browser auto|edge|cft) and the exit code reflects
-  the readiness of the browser the tests will actually use;
-- Edge readiness is probed by launching it (headless launch probe), not just
-  by checking that a file exists; headful-only limits stay in the playbook (E2).
+v3 (2026-10-07, after Arena's review @ fe70806): P0 fixes —
+- browser readiness is probed by LAUNCHING the browser headless and reading
+  /json/version from its debug port (Edge --dump-dom writes nothing through a
+  pipe on Windows, so stdout markers are unusable — see probe);
+- `ready` = HTTP 200 with a webSocketDebuggerUrl. Failures classify as
+  blocked-by-policy (Application Control text in stderr) / exe-missing /
+  probe-error — never a silent green;
+- explicit browser mode (--browser auto|edge|cft); exit code reflects the
+  readiness of the browser the tests will actually use;
+- probes run on isolated temp profiles and are reaped by Name+profile filter.
 
 Usage: python test_preflight.py [--browser auto|edge|cft]
 """
 from __future__ import annotations
 
 import argparse
+import json
 import pathlib
 import shutil
 import socket
 import subprocess
 import sys
 import tempfile
+import time
+import urllib.request
 
 ROOT = pathlib.Path(__file__).resolve().parent
 EDGE_EXE = pathlib.Path(r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe")
@@ -44,31 +50,53 @@ def port_free(port: int) -> bool:
             return False
 
 
-def probe_browser(name: str, exe: pathlib.Path) -> str:
-    """Launch-probe a Chromium browser with an isolated temp profile.
+def _free_port() -> int:
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind(("127.0.0.1", 0))
+        return s.getsockname()[1]
 
-    Returns one of: ready | blocked-by-policy | exe-missing | probe-error.
-    `ready` demands returncode 0 AND real DOM output — never just "no error text".
+
+def probe_browser(name: str, exe: pathlib.Path) -> str:
+    """Launch-probe: headless + debug port + /json/version readback.
+
+    Returns: ready | blocked-by-policy | exe-missing | probe-error.
+    Edge --dump-dom emits nothing through a pipe on Windows, so we verify by
+    serving CDP, not by stdout (Arena P0: no false green).
     """
     if not exe.exists():
         return "exe-missing"
     profile = tempfile.mkdtemp(prefix=f"pdfb-preflight-{name}-")
-    try:
-        r = subprocess.run(
-            [str(exe), "--headless", "--no-first-run",
-             f"--user-data-dir={profile}", "--dump-dom", "about:blank"],
-            capture_output=True, text=True, timeout=30)
-        if r.returncode == 0 and "<html" in (r.stdout or "").lower():
-            return "ready"
-        if "application control" in (r.stderr or "").lower():
-            return "blocked-by-policy"
-        return "probe-error"
-    except subprocess.TimeoutExpired:
-        return "probe-error"
-    except OSError:
-        return "probe-error"
-    finally:
-        shutil.rmtree(profile, ignore_errors=True)
+    port = _free_port()
+    with tempfile.TemporaryFile() as errf:
+        proc = subprocess.Popen(
+            [str(exe), "--headless", "--no-first-run", f"--user-data-dir={profile}",
+             f"--remote-debugging-port={port}", "--remote-allow-origins=*", "about:blank"],
+            stdout=subprocess.DEVNULL, stderr=errf)
+        try:
+            for _ in range(16):
+                try:
+                    with urllib.request.urlopen(
+                            f"http://127.0.0.1:{port}/json/version", timeout=1) as r:
+                        if r.status == 200 and "webSocketDebuggerUrl" in r.read().decode():
+                            return "ready"
+                except Exception:
+                    time.sleep(0.5)
+            errf.seek(0)
+            err = errf.read().decode(errors="ignore")
+            if "application control" in err.lower():
+                return "blocked-by-policy"
+            return "probe-error"
+        finally:
+            ps = ("Get-CimInstance Win32_Process -Filter "
+                  f"\"Name='{exe.name}'\" | "
+                  f"Where-Object {{ $_.CommandLine -like '*{profile}*' }} | "
+                  "ForEach-Object { Stop-Process -Id $_.ProcessId -Force }")
+            subprocess.run(["powershell", "-NoProfile", "-Command", ps], capture_output=True)
+            try:
+                proc.kill()
+            except OSError:
+                pass
+            shutil.rmtree(profile, ignore_errors=True)
 
 
 def main() -> int:
@@ -104,7 +132,7 @@ def main() -> int:
         ok.append(f"browser ales: {chosen} (probe ready)")
         other = "cft" if chosen == "edge" else "edge"
         if states[other] != "ready":
-            warn.append(f"{other} nu e gata ({states[other]}) — foloseste Edge headful pentru content scripts (E2)")
+            warn.append(f"{other} nu e gata ({states[other]}) — content scripts doar headful (E2)")
     else:
         fail.append(f"niciun browser gata pentru --browser={mode}: {states}")
 
