@@ -1,4 +1,4 @@
-// Consent Decliner — content script (v1.0)
+// Consent Decliner — content script (v1.1)
 // Heuristic: find a visible "reject all"-type button inside consent containers and click it
 // once per page. Never clicks "Accept". Known CMP coverage: OneTrust, CookieBot, Quantcast,
 // Didomi, Sourcepoint + generic text matching.
@@ -47,14 +47,14 @@
   }
 
   function tryClick(attempt) {
-    chrome.storage.sync.get({ enabled: false }, ({ enabled }) => {
+    chrome.storage.local.get({ enabled: false }, ({ enabled }) => {
       if (!enabled) return;
       const btn = findRejectButton();
       if (btn) {
         btn.click();
         window.__consentDeclinerClicked = true;
-        chrome.storage.sync.get({ clicked: 0 }, ({ clicked }) =>
-          chrome.storage.sync.set({ clicked: clicked + 1 })
+        chrome.storage.local.get({ clicked: 0 }, ({ clicked }) =>
+          chrome.storage.local.set({ clicked: clicked + 1 })
         );
         return;
       }

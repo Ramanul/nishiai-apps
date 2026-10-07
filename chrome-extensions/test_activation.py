@@ -24,9 +24,9 @@ BROWSERS = {
 }
 BROWSER = os.environ.get("E2E_BROWSER", "edge")
 CFT, BASE_PORT = BROWSERS[BROWSER]
-EXT = r"C:\Users\cw_26\nishiai-apps\chrome-extensions\cookie-decliner"
-PAGES = r"C:\Users\cw_26\nishiai-apps\chrome-extensions\testpages"
-PROFILE = rf"C:\Users\cw_26\nishiai-apps\chrome-extensions\testprofile-e2e-{BROWSER}"
+EXT = r"C:\Users\cw_26\nishiai-apps-public\chrome-extensions\cookie-decliner"
+PAGES = r"C:\Users\cw_26\nishiai-apps-public\chrome-extensions\testpages"
+PROFILE = rf"C:\Users\cw_26\nishiai-apps-public\chrome-extensions\testprofile-e2e-{BROWSER}"
 BASE = f"http://127.0.0.1:{BASE_PORT}"
 
 MEASURE = ("JSON.stringify({rejectClicked: !!window.__rejectClicked, "
@@ -97,8 +97,8 @@ def main():
 
         # PASS 2 — explicit enable, new page load: "Reject all" must be clicked
         r = sw_cdp.send("Runtime.evaluate", {
-            "expression": ("chrome.storage.sync.set({enabled:true})"
-                           ".then(()=>chrome.storage.sync.get({enabled:null}))"
+            "expression": ("chrome.storage.local.set({enabled:true})"
+                           ".then(()=>chrome.storage.local.get({enabled:null}))"
                            ".then(v=>JSON.stringify(v))"),
             "awaitPromise": True, "returnByValue": True})
         assert json.loads(r["result"]["value"])["enabled"] is True, "explicit enable failed"

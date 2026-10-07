@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Consent Decliner \u2014 auto-reject cookie banners",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Automatically clicks 'Reject all' on cookie consent banners when a legal reject option exists. Local heuristics, no tracking.",
   "permissions": [
     "storage"
