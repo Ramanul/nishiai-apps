@@ -1,16 +1,14 @@
-"""E2E (browser-level) for Consent Decliner v1.1 explicit activation.
+"""Full browser E2E for Consent Decliner v1.1 explicit activation (default OFF).
 
-What this verifies IN A REAL BROWSER (Edge headless, extension loaded):
-  1. our service worker registers and the extension is installed;
-  2. the storage gate defaults to enabled=false on a fresh profile (v1.1 change);
-  3. an explicit enable writes and reads back enabled=true.
+Runs on a REAL browser window (no headless): content script auto-injects and
+must click "Reject all" only after an explicit enable. Measured from the page
+main world via the page's own click handler (window.__rejectClicked) and the
+banner removal — content-script window markers are invisible from the main
+world (isolated world).
 
-The full in-page injection E2E (content script auto-injects and clicks) ran on
-Chrome for Testing on 6 oct (passed). It cannot re-run here since 7 oct:
-CfT chrome.dll is blocked by Windows Application Control (0x11C7) and Edge
-headless does not inject content scripts; chrome.* storage APIs are also not
-available from the page main world, so a page-side re-check is not possible.
-Browser: E2E_BROWSER=edge (default) or cft.
+Browser: E2E_BROWSER=edge (default — signed, policy-trusted; CfT chrome.dll is
+blocked by Windows Application Control since 7 oct) or E2E_BROWSER=cft.
+Note: Edge/Chrome HEADLESS does not inject content scripts — headful required.
 """
 import json
 import os
@@ -22,14 +20,17 @@ import websocket
 
 BROWSERS = {
     "cft": (r"C:\Users\cw_26\nishiai-apps\chrome-win64\chrome.exe", 9223),
-    "edge": (r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe", 9224),
+    "edge": (r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe", 9226),
 }
 BROWSER = os.environ.get("E2E_BROWSER", "edge")
 CFT, BASE_PORT = BROWSERS[BROWSER]
 EXT = r"C:\Users\cw_26\nishiai-apps\chrome-extensions\cookie-decliner"
 PAGES = r"C:\Users\cw_26\nishiai-apps\chrome-extensions\testpages"
-PROFILE = rf"C:\Users\cw_26\nishiai-apps\chrome-extensions\testprofile-activation-{BROWSER}"
+PROFILE = rf"C:\Users\cw_26\nishiai-apps\chrome-extensions\testprofile-e2e-{BROWSER}"
 BASE = f"http://127.0.0.1:{BASE_PORT}"
+
+MEASURE = ("JSON.stringify({rejectClicked: !!window.__rejectClicked, "
+           "bannerGone: !document.getElementById('onetrust-banner-sdk')})")
 
 
 def get_json(path):
@@ -58,10 +59,10 @@ def main():
         ["python", "-m", "http.server", "8077"], cwd=PAGES,
         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     chrome = subprocess.Popen([
-        CFT, "--headless=new", f"--remote-debugging-port={BASE_PORT}",
+        CFT, f"--remote-debugging-port={BASE_PORT}",
         "--remote-allow-origins=*",
         f"--user-data-dir={PROFILE}", f"--load-extension={EXT}",
-        "--no-first-run", "--window-size=1280,800", "about:blank"])
+        "--no-first-run", "--window-size=1100,700", "about:blank"])
     try:
         for _ in range(40):
             try:
@@ -72,35 +73,44 @@ def main():
         lst = get_json("/json/list")
         page = CDP(next(t for t in lst if t["type"] == "page")["webSocketDebuggerUrl"])
         page.send("Page.enable")
-        page.send("Page.navigate", {"url": "http://localhost:8077/consent.html"})
-        time.sleep(2)
 
+        # PASS 1 — fresh profile, storage gate default OFF: banner must stay untouched
+        page.send("Page.navigate", {"url": "http://localhost:8077/consent.html"})
+        time.sleep(8)  # content script retries up to ~4.2s after injection
+        state1 = json.loads(page.send("Runtime.evaluate", {
+            "expression": MEASURE, "returnByValue": True})["result"]["value"])
+        assert state1["rejectClicked"] is False, "FAILED: clicked while default OFF"
+        assert state1["bannerGone"] is False, "FAILED: banner touched while default OFF"
+
+        # extension service worker (ours = /bg.js, not browser built-ins)
         sw = None
-        for _ in range(30):  # MV3 SW registers lazily on a fresh profile
-            lst = get_json("/json/list")
-            sw = next((t for t in lst if t["type"] == "service_worker"
-                       and t["url"].endswith("/bg.js")), None)  # ours, not built-ins
+        for _ in range(20):
+            for t in get_json("/json/list"):
+                if t["type"] == "service_worker" and t["url"].endswith("/bg.js"):
+                    sw = t
+                    break
             if sw:
                 break
             time.sleep(0.5)
         assert sw, "extension service worker never registered"
         sw_cdp = CDP(sw["webSocketDebuggerUrl"])
 
-        r = sw_cdp.send("Runtime.evaluate", {
-            "expression": "chrome.storage.sync.get({enabled:false}).then(v=>JSON.stringify(v))",
-            "awaitPromise": True, "returnByValue": True})
-        default_state = json.loads(r["result"]["value"])
-        assert default_state["enabled"] is False, \
-            f"FAILED: default is {default_state['enabled']!r}, must be False (explicit activation)"
-
+        # PASS 2 — explicit enable, new page load: "Reject all" must be clicked
         r = sw_cdp.send("Runtime.evaluate", {
             "expression": ("chrome.storage.sync.set({enabled:true})"
                            ".then(()=>chrome.storage.sync.get({enabled:null}))"
                            ".then(v=>JSON.stringify(v))"),
             "awaitPromise": True, "returnByValue": True})
         assert json.loads(r["result"]["value"])["enabled"] is True, "explicit enable failed"
+        page.send("Page.navigate", {"url": "http://localhost:8077/consent.html?x=2"})
+        time.sleep(8)
+        state2 = json.loads(page.send("Runtime.evaluate", {
+            "expression": MEASURE, "returnByValue": True})["result"]["value"])
+        assert state2["rejectClicked"] is True, "FAILED: no reject click after enable"
+        assert state2["bannerGone"] is True, "FAILED: banner still present after enable"
 
-        print("E2E ACTIVARE OK (browser): SW instalat; default OFF; enable explicit = ON")
+        print("E2E COMPLET OK (fereastra reala): default OFF = banner neatins; "
+              "enable explicit -> 'Reject all' apasat + banner eliminat")
         return 0
     finally:
         try:
