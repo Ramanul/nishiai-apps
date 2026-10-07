@@ -8,6 +8,14 @@ import re
 from openpyxl import Workbook, load_workbook
 
 _ILLEGAL_SHEET_CHARS = re.compile(r"[\[\]:*?/\\]")
+# OWASP CSV injection: values starting with = + - @ execute as formulas
+# when the CSV is opened in Excel/LibreOffice; prefix with ' to keep them literal.
+_FORMULA_PREFIX = re.compile(r"^[=+\-@]")
+
+
+def _csv_cell(value: object) -> str:
+    text = str(value)
+    return "'" + text if _FORMULA_PREFIX.match(text) else text
 
 
 def _sheet_name(base: str, used: set[str]) -> str:
@@ -101,6 +109,6 @@ def write_errors(results: list[dict], csv_path: pathlib.Path) -> int:
         writer.writerow(["file", "status", "reason"])
         rows = 0
         for result in results:
-            writer.writerow([result["file"], result["status"], result["reason"]])
+            writer.writerow([_csv_cell(result[key]) for key in ("file", "status", "reason")])
             rows += 1
     return rows

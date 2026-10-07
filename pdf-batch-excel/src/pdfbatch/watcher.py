@@ -64,22 +64,33 @@ def watch_pass(
         return cur_sizes, [], {}
 
     results: list[dict] = []
+    processed: list[pathlib.Path] = []
     for path in todo:
         try:
-            results.append(extract_pdf(path))
+            before = path.stat()
+        except OSError:
+            continue
+        try:
+            result = extract_pdf(path)
         except Exception as exc:  # extract_pdf classifies its own; belt for the unexpected
-            results.append(
-                {"file": path.name, "status": "error", "sheets": [], "reason": f"{type(exc).__name__}: {exc}"}
-            )
+            result = {"file": path.name, "status": "error", "sheets": [], "reason": f"{type(exc).__name__}: {exc}"}
+        try:
+            after = path.stat()
+        except OSError:
+            continue  # vanished mid-pass; retried on the next pass
+        if (before.st_size, before.st_mtime) != (after.st_size, after.st_mtime):
+            continue  # rewritten while reading: drop this read, retry on the next pass
+        results.append(result)
+        processed.append(path)
 
     previous_sheets = {
         name: state["files"][name]["sheet"]
-        for name in (p.name for p in todo)
+        for name in (p.name for p in processed)
         if name in state["files"] and state["files"][name].get("sheet")
     }
     assigned = append_results(out_path, results, previous_sheets)
 
-    for path, result in zip(todo, results):
+    for path, result in zip(processed, results):
         try:
             st = path.stat()
         except OSError:

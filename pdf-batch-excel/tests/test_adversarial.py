@@ -56,17 +56,69 @@ def _all_cells(out: pathlib.Path):
     return [c for ws in wb for row in ws.iter_rows() for c in row if c.value not in (None, "")]
 
 
+FORMULA_VALUES = ["=1+1", "+5", "-3", "@cmd", "SUM(A1)", "=2*3", "+42", "-99", "@NOW", "=SUM(1,2)"]
+
+
 def test_formula_like_cells_stay_literal(tmp_path):
     folder = tmp_path / "pdfs"
     folder.mkdir()
-    _cell_pdf(folder / "formulas.pdf", ["=1+1", "+5", "-3", "@cmd", "SUM(A1)"])
+    _cell_pdf(folder / "formulas.pdf", FORMULA_VALUES)
     out = tmp_path / "out.xlsx"
     assert main(["run", str(folder), "-o", str(out)]) == 0
     cells = _all_cells(out)
     values = {str(c.value) for c in cells}
-    for expected in ("=1+1", "+5", "-3", "@cmd", "SUM(A1)"):
+    for expected in FORMULA_VALUES:
         assert expected in values, f"missing literal {expected!r}"
     assert all(c.data_type != "f" for c in cells), "a formula reached the workbook"
+
+
+def test_errors_csv_neutralises_formula_like_fields(tmp_path):
+    from pdfbatch.excel_out import write_errors
+
+    csv_path = tmp_path / "errors.csv"
+    write_errors(
+        [
+            {"file": "=evil.pdf", "status": "error", "reason": "+payload"},
+            {"file": "plain.pdf", "status": "needs_ocr", "reason": "-5 pages"},
+        ],
+        csv_path,
+    )
+    text = csv_path.read_text(encoding="utf-8-sig")
+    assert "'=evil.pdf" in text and "'+payload" in text and "'-5 pages" in text
+    assert '"plain.pdf' not in text  # untouched values stay as-is (no quote, no prefix)
+
+
+def test_file_changed_mid_extract_is_retried(tmp_path, monkeypatch):
+    from pdfbatch import watcher
+    from pdfbatch.watcher import load_state, watch_pass
+
+    folder = tmp_path / "pdfs"
+    folder.mkdir()
+    _table_pdf(folder / "race.pdf")
+    out = tmp_path / "out.xlsx"
+    state_path = tmp_path / "out.xlsx.watch-state.json"
+    state = load_state(state_path)
+
+    real_extract = watcher.extract_pdf
+
+    def racing_extract(path):
+        result = real_extract(path)
+        with open(path, "ab") as handle:  # writer appends while we read
+            handle.write(b"% extra bytes")
+        return result
+
+    monkeypatch.setattr(watcher, "extract_pdf", racing_extract)
+    sizes = {p.name: p.stat().st_size for p in folder.glob("*.pdf")}
+    sizes, results, _ = watch_pass(folder, out, state, sizes, state_path)
+    assert results == [] and "race.pdf" not in state["files"]
+    assert not out.exists(), "partial read must not reach the workbook"
+    monkeypatch.undo()
+    # next pass: size moved => treated as still copying; the pass after processes it
+    sizes, results, _ = watch_pass(folder, out, state, sizes, state_path)
+    assert results == []
+    _, results, _ = watch_pass(folder, out, state, sizes, state_path)
+    assert [r["file"] for r in results] == ["race.pdf"]
+    assert state["files"]["race.pdf"]["status"] == "ok"
 
 
 def test_corrupt_pdf_classified_not_crash(tmp_path):
