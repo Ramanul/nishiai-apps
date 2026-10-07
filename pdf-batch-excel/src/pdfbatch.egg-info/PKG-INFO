@@ -1,7 +1,0 @@
-Metadata-Version: 2.4
-Name: pdfbatch
-Version: 0.1.0
-Summary: Batch PDF tables -> one Excel workbook + error report (local, no cloud)
-Requires-Python: >=3.11
-Requires-Dist: pdfplumber>=0.11
-Requires-Dist: openpyxl>=3.1
