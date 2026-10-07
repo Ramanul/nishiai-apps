@@ -6,6 +6,16 @@
 > 3. commit + push (Arena si magazinele de cod vad aceeasi realitate).
 > O lectie care exista doar in memorie/poveste nu opreste nimic — doar ce e in preflight sau in cod se re-verifica singur.
 
+> **Proveniență obligatorie pe lecție** (format, după runda Arena 7 oct): ID · declanșator ·
+> mediu/scope (OS, browser, versiune, flags) · acțiune · rezultat observabil independent ·
+> mecanizabil? (unde: preflight / test / nimic+motiv) · ultima verificare. Lecțiile actuale
+> provin toate din sesiunea 2026-10-07, Windows 11 24H2, CfT 155.0.8059.39, Edge stabil oct 2026.
+
+> **Checklist de închidere a sesiunii** (completat în raportul sesiunii, apoi comis):
+> - Surprize noi: [listă] → fiecare: ADĂUGATĂ (E/F n) / EXISTENTĂ (E/F n) / RESPINSĂ (motiv)
+> - Reguli mecanizabile noi: [verificări adăugate în preflight/teste] sau „nemecanizabil pentru că … → control manual: [owner]"
+> - Dovezi: rulări + output concret (SHA-ul codului testat)
+
 ## Mediu (E1-E8)
 
 - **E1 · Cand pornim unelte binare pe cai scrise de utilizator → Application Control le poate bloca** (CfT `chrome.dll` 0x11C7 din 7 oct; fontTools `iup.pyd`; llvmlite). Ruleaza `test_preflight.py` INAINTE de sesiune. Alternativa verificata: Edge (semnat, in Program Files). Pentru .pyd cu fallback pure-Python: redenumire `.pyd.disabled`.
@@ -20,8 +30,9 @@
 ## Flux de test (F1-F4)
 
 - **F1 · Profil de test proaspat → inainte de `rm -rf` omoara procesele care il tin** (lockfile „Device or resource busy" = proces viu). Profilurile nu se comit in repo.
-- **F2 · La fiecare verificare, intreaba: ce vad daca sunt GREȘIT?** Lecția 7 oct: primul „default OFF" raportat a trecut din greșita cauza (scriptul nici nu rulase din cauza E4, nu pentru că poarta funcționa). Măsoara ambele ture (OFF și ON), nu doar cea care intereseaza.
-- **F3 · Suportul de test e parte din produs**: `test_activation.py` (edge|cft), `test_e2e.py`, `test_exporter.py`, `test_preflight.py` — se comit, se ruleaza dupa fiecare schimbare de produs, nu „cand se poate".
+- **F2 · La fiecare verificare, intreba: ce vad daca sunt GREȘIT?** Lecția 7 oct: primul „default OFF" raportat a trecut din greșita cauza (scriptul nici nu rulase din cauza E4, nu pentru că poarta funcționa). Intărit după runda Arena: măsoară ambele ture (OFF și ON), **exige un rezultat observabil independent** (efect din main-world) și **testul pică dacă harness-ul sau observatorul n-au rulat** — „niciun semnal" înseamnă neconcludent, nu trecut.
+- **F3 · Suportul de test e parte din produs**: `test_activation.py` (edge|cft), `test_e2e.py`, `test_exporter.py`, `test_preflight.py` (+unit) — se comit, se ruleaza dupa fiecare schimbare de produs, nu „cand se poate".
+- **F5 · Două niveluri, nu le confunda**: preflight = CAPABILITĂȚI ale mediului (browser pornibil, porturi, fișiere); smoke/E2E = COMPORTAMENT real (injectare content script, click, storage). Pre-flight verde NU dovedește injectarea — după orice schimbare de produs rulează și `test_activation.py`.
 - **F4 · Canale externe (chat Arena, browser IAB)**: nu tasta automat intr-o fereastra activa pe desktopul utilizatorului (tastele lui ajung in compozitor); bannerul „This chat changed… Refresh" = pagina stale, refresh-ul ȘTERGE draft-ul; panoul „Was this task successful?" se închide pe coordonate („Keep working").
 
 ## Istorie
