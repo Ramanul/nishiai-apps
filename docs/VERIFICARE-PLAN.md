@@ -1,4 +1,4 @@
-Verificarea din 2026-10-07 confirmă commitul curent 1a03e6836c2b680066fbb90cea18faea7dbbbd9a și blobul docs/colaborare.md 02b5b6900b013a356cd9daf796981a4cb8239b90.
+Verificarea din 2026-10-07 confirmă commitul curent (istoric, la data planului) 1a03e6836c2b680066fbb90cea18faea7dbbbd9a și blobul docs/colaborare.md 02b5b6900b013a356cd9daf796981a4cb8239b90.
 
 Plan independentă de verificare înainte de publicare
 

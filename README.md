@@ -4,7 +4,7 @@ Small, local-first products by NISHIAI (Alexandru Stanciu). No cloud, no telemet
 
 | Product | What it does | Status |
 |---|---|---|
-| [`pdf-batch-excel/`](pdf-batch-excel/) | Windows CLI: batch-convert PDF tables to one XLSX workbook + explicit error report (`ok` / `needs_ocr` / `error`). Hot-folder watcher included. | v0.2, tested (pytest 9/9) |
+| [`pdf-batch-excel/`](pdf-batch-excel/) | Windows CLI: batch-convert PDF tables to one XLSX workbook + explicit error report (`ok` / `needs_ocr` / `error`). Hot-folder watcher included. | v0.2, tested (pytest 18/18 (suita adversarială include 10 valori-formulă)) |
 | [`chrome-extensions/table-exporter/`](chrome-extensions/table-exporter/) | Chrome MV3 extension: export page tables to CSV. | tested E2E |
 | [`chrome-extensions/cookie-decliner/`](chrome-extensions/cookie-decliner/) | Chrome MV3 extension: clicks "Reject all" on consent banners. | tested E2E |
 | [`csv-viewer/`](csv-viewer/) | Android (Kotlin/Compose) CSV viewer: open from SAF, search/filter. | v1.0, tested on emulator |
