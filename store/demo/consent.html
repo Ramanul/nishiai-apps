@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Travel journal — demo page</title>
+<style>
+  body { font: 16px/1.6 Georgia, 'DejaVu Serif', serif; margin: 0; background: #fbfaf7; color: #222; }
+  header { padding: 22px 48px; border-bottom: 1px solid #e8e3d9; font: 700 22px system-ui, 'DejaVu Sans', sans-serif; }
+  article { max-width: 760px; margin: 36px auto; padding: 0 24px; }
+  h1 { font-size: 34px; line-height: 1.2; margin: 0 0 14px; }
+  .meta { color: #7a7266; font: 14px system-ui, 'DejaVu Sans', sans-serif; margin-bottom: 22px; }
+  .hero { height: 200px; border-radius: 10px; background: linear-gradient(135deg,#9cc7d6,#e4c79a); margin-bottom: 24px; }
+  #cookie-consent { position: fixed; left: 0; right: 0; bottom: 0; background: #fff; border-top: 1px solid #ddd;
+    box-shadow: 0 -6px 24px rgba(0,0,0,.12); padding: 22px 48px; display: flex; gap: 28px; align-items: center;
+    font: 15px system-ui, 'DejaVu Sans', sans-serif; }
+  #cookie-consent p { margin: 0; flex: 1; color: #333; }
+  #cookie-consent button { border: 0; border-radius: 8px; padding: 12px 20px; font-weight: 700; cursor: pointer; font-size: 15px; }
+  .accept { background: #1f6feb; color: #fff; }
+  .reject { background: #eef1f4; color: #1d2733; }
+  .settings { background: transparent; color: #1f6feb; text-decoration: underline; }
+  #status { display: none; }
+</style>
+</head>
+<body>
+<header>Wander &amp; Write</header>
+<article>
+  <h1>Three slow days in the Apuseni Mountains</h1>
+  <div class="meta">Demo article · 6 min read</div>
+  <div class="hero"></div>
+  <p>The road climbs out of the valley in long, patient bends. By the second morning the village bakery
+  knew our order, and the fog sat in the beech woods until almost noon.</p>
+  <p>We walked to the karst springs, lost the trail twice, and found it again thanks to a shepherd who
+  pointed with his whole arm, the way people do when the answer is obvious to them.</p>
+</article>
+<div id="cookie-consent" class="cookie-banner" role="dialog" aria-label="Cookie consent">
+  <p>We use cookies to measure traffic and personalise ads. You can accept all cookies or keep only the
+  ones needed for the site to work.</p>
+  <button class="settings">Cookie settings</button>
+  <button class="reject" id="reject">Reject all</button>
+  <button class="accept" id="accept">Accept all</button>
+</div>
+<div id="status"></div>
+<script>
+  const banner = document.getElementById('cookie-consent');
+  const status = document.getElementById('status');
+  document.getElementById('reject').addEventListener('click', () => { status.textContent = 'rejected'; banner.remove(); });
+  document.getElementById('accept').addEventListener('click', () => { status.textContent = 'accepted'; banner.remove(); });
+</script>
+</body>
+</html>
