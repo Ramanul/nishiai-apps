@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Quarterly report — demo page</title>
+<style>
+  body { font: 15px/1.5 system-ui, 'DejaVu Sans', sans-serif; margin: 0; background: #f6f7f9; color: #1d2733; }
+  header { background: #1d2733; color: #fff; padding: 18px 40px; font-weight: 700; font-size: 18px; }
+  main { padding: 28px 40px; max-width: 1100px; }
+  h2 { font-size: 17px; margin: 26px 0 10px; }
+  table { border-collapse: collapse; background: #fff; width: 100%; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  th, td { padding: 9px 12px; border-bottom: 1px solid #e6e9ee; text-align: left; }
+  th { background: #eef2f6; font-weight: 600; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+</style>
+</head>
+<body>
+<header>Northwind Supplies · Quarterly report (demo data)</header>
+<main>
+  <h2>Sales by region</h2>
+  <table id="regions">
+    <tr><th>Region</th><th>Q1</th><th>Q2</th><th>Q3</th><th>Change</th></tr>
+    <tr><td>North</td><td class="num">48,200</td><td class="num">51,900</td><td class="num">55,400</td><td class="num">+6.7%</td></tr>
+    <tr><td>South</td><td class="num">39,750</td><td class="num">37,100</td><td class="num">36,800</td><td class="num">-0.8%</td></tr>
+    <tr><td>East</td><td class="num">27,300</td><td class="num">29,950</td><td class="num">33,600</td><td class="num">+12.2%</td></tr>
+    <tr><td>West</td><td class="num">31,480</td><td class="num">30,020</td><td class="num">32,770</td><td class="num">+9.2%</td></tr>
+  </table>
+  <div class="grid">
+    <div>
+      <h2>Top products</h2>
+      <table id="products">
+        <tr><th>SKU</th><th>Product</th><th>Units</th></tr>
+        <tr><td>NW-1042</td><td>Recycled paper A4</td><td class="num">12,480</td></tr>
+        <tr><td>NW-2210</td><td>Desk organiser</td><td class="num">3,905</td></tr>
+        <tr><td>NW-3307</td><td>LED desk lamp</td><td class="num">2,640</td></tr>
+      </table>
+    </div>
+    <div>
+      <h2>Notes from suppliers</h2>
+      <table id="notes">
+        <tr><th>Supplier</th><th>Note</th></tr>
+        <tr><td>Alpha Paper</td><td>=HYPERLINK("http://example.com","price list")</td></tr>
+        <tr><td>Brightlite</td><td>@ restock planned for week 44</td></tr>
+      </table>
+    </div>
+  </div>
+</main>
+</body>
+</html>

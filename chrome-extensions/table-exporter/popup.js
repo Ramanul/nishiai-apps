@@ -3,11 +3,13 @@ let pageTables = [];
 let pageHost = "";
 
 function toCSV(rows) {
-  // OWASP: cells starting with = + - @ would execute as formulas in Excel/LibreOffice.
-  // Prefixing with ' keeps the literal text visible instead of an active formula.
+  // OWASP: cells starting with = + - @ (or tab / carriage return) would execute as formulas in
+  // Excel/LibreOffice. Prefixing with ' keeps the literal text visible instead of an active formula.
+  // Plain numbers such as -0.8% or +6.7% are left alone so they stay numbers in the spreadsheet.
+  const isPlainNumber = (s) => /^[+-]?\d[\d.,\s]*%?$/.test(s);
   const safe = (cell) => {
     let s = String(cell ?? "").replace(/"/g, '""');
-    if (/^[=+\-@]/.test(s)) s = `'${s}`;
+    if (/^[=+\-@\t\r]/.test(s) && !isPlainNumber(s)) s = `'${s}`;
     return `"${s}"`;
   };
   return rows.map((row) => row.map(safe).join(",")).join("\r\n");

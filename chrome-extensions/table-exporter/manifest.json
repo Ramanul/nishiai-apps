@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Table Exporter \u2014 tables to CSV",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Export every table on the current page to CSV in one click. Local only, no tracking.",
   "permissions": [
     "activeTab",

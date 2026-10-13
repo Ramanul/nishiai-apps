@@ -6,3 +6,5 @@ __pycache__/
 # local test benches (regenerable)
 chrome-extensions/testprofile*/
 chrome-extensions/test-downloads/
+
+store/dist/
