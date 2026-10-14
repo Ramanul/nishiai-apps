@@ -1,0 +1,19 @@
+data,nisa_cautata,actori_in_store,concurenti_activi_u30ge5,lider,lider_u30,lider_fail_30z,lider_rating,prag_lider_ge20,prag_concurenti_le3,verdict
+2026-10-14,coles,12193,49,apidojo/youtube-scraper,355,0.18,3.3,DA,NU,NU TRECE
+2026-10-14,kleinanzeigen,130,11,memo23/kleinanzeigen-search-scraper-ppe,106,0.15,5.0,DA,NU,NU TRECE
+2026-10-14,leboncoin,99,24,fatihtahta/leboncoin-fr-scraper,97,0.0,3.6,DA,NU,NU TRECE
+2026-10-14,pagesjaunes,33,4,saswave/pagesjaunes-scraper,41,0.37,5,DA,NU,NU TRECE
+2026-10-14,sofascore,50,21,crawlstone/tennis-scraper,995,0.05,5,DA,NU,NU TRECE
+2026-10-14,flashscore,109,19,extractify-labs/flashscore-tennis-matches,867,0.0,5,DA,NU,NU TRECE
+2026-10-14,skyscanner,48,8,memo23/skyscanner-scraper,119,0.03,5,DA,NU,NU TRECE
+2026-10-14,clutch,139,17,memo23/apify-clutch-cheerio,162,0.01,4.6,DA,NU,NU TRECE
+2026-10-14,udemy,34,4,easyapi/udemy-course-scraper,25,0.28,4.7,DA,NU,NU TRECE
+2026-10-14,zomato,76,6,easyapi/zomato-restaurant-reviews-scraper,36,0.16,5,DA,NU,NU TRECE
+2026-10-14,fiverr,45,12,memo23/fiverr-scraper,114,0.05,4.9,DA,NU,NU TRECE
+2026-10-14,twitch,820,29,tri_angle/social-media-finder,157,0.01,4.6,DA,NU,NU TRECE
+2026-10-14,impressum,684,45,compass/crawler-google-places,39882,0.03,4.7,DA,NU,NU TRECE
+2026-10-14,sitemap,1643,5,apify/sitemap-extractor,41,0.32,3.2,DA,NU,NU TRECE
+2026-10-14,greenhouse,1307,25,fantastic-jobs/greenhouse-jobs-api,130,0.0,3,DA,NU,NU TRECE
+2026-10-14,email pattern,1559,48,clearpath/email-finder-api,374,0.21,3.8,DA,NU,NU TRECE
+2026-10-14,dice jobs,174,16,bebity/glassdoor-jobs-scraper,423,0.16,4.4,DA,NU,NU TRECE
+2026-10-14,enrich google maps,484,39,compass/crawler-google-places,39882,0.03,4.7,DA,NU,NU TRECE
