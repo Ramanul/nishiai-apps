@@ -29,3 +29,24 @@
 **Condiție de redeschidere:**
 - o nișă trece pragul; sau
 - apare o comandă plătită care cere un actor; atunci actorul se construiește pe banii clientului și se publică după aceea.
+
+## 2026-10-14 — Cererea din emailuri (FLUX-2, partea 2)
+
+**Date:** `cerere_freelancer_2026-10-14.csv` conține 75 de proiecte din 8 digesturi Freelancer.com primite în perioada 6–14 oct. Digesturile sunt filtrate după competențele din profil (PDF, Data Entry, Excel), deci arată cererea pentru acest profil, nu toată piața. Upwork și Fiverr n-au trimis alerte de proiecte în perioada asta.
+
+| Categorie | Proiecte | Pondere |
+|---|---|---|
+| PDF/scan → Word/Docs/TXT | 27 | 36% |
+| PDF/scan/formulare → Excel | 16 | 21% |
+| Scraping / extragere web | 7 | 9% |
+| Automatizare / utilitar custom | 6 | 8% |
+| Altele (design, recovery, nepotrivite) | 19 | 25% |
+
+**Ce reiese:**
+- **57% din cerere e conversie de documente** (PDF sau scan → format editabil). E exact serviciul „PDF în Excel/Word” planificat pe Fiverr.
+- 4 proiecte cer explicit lucru manual, fără OCR. Pe acestea le refuzăm: regula Fiverr cere respectarea cererilor „fără AI”, iar asta aplicăm peste tot.
+- Bugetele sunt intervale alese de client dintr-o listă fixă a platformei (de exemplu €14–117 sau €117–350), nu prețuri efectiv plătite. Ofertele câștigătoare sunt de obicei sub mijlocul intervalului.
+
+**Verdict:** pista cu cerere repetată e conversia de documente. Prioritatea trece pe:
+1. pachet de serviciu „PDF/scan → Excel/Word” pe Fiverr și Freelancer.com;
+2. utilitarul `pdf-batch-excel`, ca unealtă internă de producție (nu ca produs separat).
