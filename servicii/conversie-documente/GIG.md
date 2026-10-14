@@ -52,7 +52,7 @@ I use AI-assisted reading plus a second, independent verification pass and arith
 **FAQ**
 - *Do you use OCR or AI?* Yes, AI-assisted reading, always followed by a separate verification pass and arithmetic checks. If you require purely manual work, this gig is not for you.
 - *What if a page is hard to read?* Unclear values are flagged [UNREADABLE] with the page and cell, and I ask you rather than guess.
-- *What happens to my files?* They are used only for your order. I delete my working copies after delivery. Because the work is AI-assisted, your files are also processed by the AI provider (Anthropic) and retained under its privacy policy, so please don't send documents with sensitive personal data (ID, medical or personal financial records).
+- *What happens to my files?* They are used only for your order. The work is AI-assisted, so your files are processed by the AI provider (Anthropic's Claude). Your files are not used for AI training. After delivery I delete the work conversation, and the provider removes it from its systems within 30 days. Please don't send documents with sensitive personal data (ID, medical or personal financial records).
 - *Which languages?* English and Romanian documents; other Latin-script languages on request after a sample.
 
 **Buyer requirements (questions at order):**
