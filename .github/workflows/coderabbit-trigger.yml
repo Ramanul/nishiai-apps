@@ -1,0 +1,33 @@
+# Pornește automat review-ul CodeRabbit pe fiecare PR.
+# CodeRabbit nu face review automat pe repo-uri publice cu <10 stele și ignoră
+# comenzile postate de boți (testat 2026-10-14 pe PR #6). De aceea comentariul
+# trebuie postat cu un token personal (secret CODERABBIT_TRIGGER_TOKEN).
+name: CodeRabbit auto-trigger
+
+on:
+  pull_request_target:
+    types: [opened, reopened, ready_for_review, synchronize]
+
+permissions: {}
+
+jobs:
+  trigger:
+    # Doar PR-uri din același repo (nu din fork-uri), ca tokenul să nu fie expus.
+    if: >-
+      github.event.pull_request.draft == false &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comentează @coderabbitai review
+        env:
+          GH_TOKEN: ${{ secrets.CODERABBIT_TRIGGER_TOKEN }}
+          PR: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          if [ -z "${GH_TOKEN}" ]; then
+            echo "::warning::Lipsește secretul CODERABBIT_TRIGGER_TOKEN; review-ul nu a fost declanșat."
+            exit 0
+          fi
+          gh pr comment "$PR" --repo "$REPO" --body "@coderabbitai review" \
+            || echo "::warning::Nu am putut posta comentariul de declanșare"
