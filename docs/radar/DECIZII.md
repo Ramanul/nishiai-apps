@@ -1,0 +1,30 @@
+# Decizii radar
+
+## 2026-10-14 — Apify Store: nimic de construit
+
+**Verdict:** PACHET-2 (actor Apify) se oprește ca produs de venit. Se reia doar dacă un radar ulterior găsește o nișă care trece pragul.
+
+**Date:** `radar_apify_2026-10-14.csv`, obținute din API-ul public Apify Store.
+- Am scanat primii 6.065 de actori după popularitate, din 87.158.
+- Din ei am selectat 18 nișe în care liderul e slab: rată de eșec ≥10% sau rating <4.
+- Pentru fiecare nișă am numărat concurenții în tot Store-ul.
+
+**Pragul:** liderul are ≥20 utilizatori pe 30 de zile, iar nișa are ≤3 concurenți activi (cu ≥5 utilizatori pe 30 de zile). Rezultat: 0 nișe din 18 trec.
+
+**Cele mai apropiate de prag:**
+
+| Nișă | Concurenți activi | Utilizatori/30 zile, total nișă | Eșecul liderului |
+|---|---|---|---|
+| pagesjaunes | 4 | ~107 | 37% |
+| Udemy | 4 | ~89 | 28% |
+| sitemap | 5 | ~223 | 32% |
+
+**Venit estimat** pentru cel mai bun caz: ~20–60 $/lună brut, înainte de costul de compute. E aproape de pragul de plată de 20 $.
+
+**Motiv:** piața e saturată de producători automați. Cererea pentru nișele slab servite e mică (~100–200 de utilizatori pe lună în toată nișa).
+
+**Unghi orb cunoscut:** Store-ul nu arată cererea neservită, adică site-urile pentru care nu există încă actor. Ea se măsoară din cererile repetate pe Upwork și Fiverr, în FLUX-2, partea 2.
+
+**Condiție de redeschidere:**
+- o nișă trece pragul; sau
+- apare o comandă plătită care cere un actor; atunci actorul se construiește pe banii clientului și se publică după aceea.
