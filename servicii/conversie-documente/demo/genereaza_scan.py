@@ -3,12 +3,27 @@
 Datele sunt fictive (fără persoane, firme sau cifre reale). Imaginea e rotită ușor,
 cu zgomot și contrast redus, ca un scan real. Rulare: python genereaza_scan.py
 """
+import os
 import random
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 random.seed(7)
-F = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
-FB = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+# Fonturi: DEMO_FONT / DEMO_FONT_BOLD (căi .ttf) au prioritate; altfel căutăm DejaVu în locurile
+# uzuale (Linux, Windows cu DejaVu instalat). Dacă nu există, folosim fontul implicit Pillow
+# (cere Pillow >= 10.1); imaginea iese, doar diacriticele pot arăta altfel.
+_CANDIDATI = {
+    "regular": ["/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", "C:/Windows/Fonts/DejaVuSans.ttf"],
+    "bold": ["/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", "C:/Windows/Fonts/DejaVuSans-Bold.ttf"],
+}
+
+
+def font(stil, marime):
+    env = os.environ.get("DEMO_FONT_BOLD" if stil == "bold" else "DEMO_FONT")
+    for cale in ([env] if env else []) + _CANDIDATI[stil]:
+        if cale and os.path.exists(cale):
+            return ImageFont.truetype(cale, marime)
+    return ImageFont.load_default(size=marime)
+
 ITEMS = ["Hârtie A4 80g", "Toner negru", "Pix gel albastru", "Dosar plic", "Capsator", "Capse 24/6",
          "Marker permanent", "Bandă adezivă", "Plic C4", "Caiet A5", "Biblioraft 8 cm", "Post-it 76x76",
          "Calculator birou", "Foarfecă", "Lipici stick", "Separator carton"]
@@ -25,7 +40,7 @@ def main(dest="inventar-scanat.pdf"):
     W, H = 1654, 2339  # A4 la 200 dpi
     img = Image.new("L", (W, H), 250)
     d = ImageDraw.Draw(img)
-    f, fb, ft = ImageFont.truetype(F, 30), ImageFont.truetype(FB, 30), ImageFont.truetype(FB, 44)
+    f, fb, ft = font("regular", 30), font("bold", 30), font("bold", 44)
     d.text((120, 120), "INVENTAR MAGAZIE — DEPOZIT 2 (date demonstrative)", font=ft, fill=20)
     d.text((120, 190), "Data: 03.10.2026      Gestionar: ___________      Pagina 1/1", font=f, fill=40)
     cols = [120, 200, 380, 960, 1110, 1310, 1540]
