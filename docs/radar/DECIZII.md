@@ -6,8 +6,9 @@
 
 **Date:** `radar_apify_2026-10-14.csv`, obținute din API-ul public Apify Store.
 - Am scanat primii 6.065 de actori după popularitate, din 87.158.
-- Din ei am selectat 18 nișe în care liderul e slab: rată de eșec ≥10% sau rating <4.
-- Pentru fiecare nișă am numărat concurenții în tot Store-ul.
+- Din ei am selectat 18 nișe în care liderul **din această primă trecere** era slab: rată de eșec ≥10% sau rating <4. Unele nișe le-am căutat cu un termen mai larg (de exemplu „impressum”, „email pattern”, „enrich google maps”).
+- Pentru fiecare nișă am căutat în tot Store-ul și am numărat concurenții activi.
+- Coloana `lider` din CSV e liderul găsit de căutarea în tot Store-ul. În mai multe nișe (de exemplu sofascore, coles) acesta e alt actor, mai puternic decât cel care a dus la selecție. Asta întărește verdictul: nișele sunt mai ocupate decât arăta prima trecere.
 
 **Pragul:** liderul are ≥20 utilizatori pe 30 de zile, iar nișa are ≤3 concurenți activi (cu ≥5 utilizatori pe 30 de zile). Rezultat: 0 nișe din 18 trec.
 
