@@ -17,3 +17,8 @@ All four products go through the frozen acceptance matrix in
 in the world". Residual risks are written down per product in the same document.
 
 Private (never committed here): real invoices, credentials, store-account paperwork.
+
+## Support, refunds & terms
+
+Contact: **andifreelancer2@gmail.com** · 14-day money-back guarantee on Pro licenses ·
+cancel subscriptions anytime. Full details: [`SUPPORT.md`](SUPPORT.md).
